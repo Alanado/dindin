@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Patch,
   Post,
@@ -16,6 +17,8 @@ import { UpdateUserDTO } from './dto/update-user.dto';
 import { AuthGuard } from 'src/infra/providers/auth-guard.provider';
 import { ReplaceUserDTO } from './dto/replace-user.dto';
 import { ReplaceUserService } from './services/replace-user.service';
+import { DeleteUserService } from './services/delete-user.service';
+import { FindUsersService } from './services/find-users.service';
 
 @Controller('/user')
 export class UserController {
@@ -24,6 +27,8 @@ export class UserController {
     private readonly showProfile: ShowProfileService,
     private readonly updateUser: UpdateUserService,
     private readonly replaceUser: ReplaceUserService,
+    private readonly deleteUser: DeleteUserService,
+    private readonly findUsers: FindUsersService,
   ) {}
 
   @Post()
@@ -34,7 +39,7 @@ export class UserController {
   }
 
   @UseGuards(AuthGuard)
-  @Get()
+  @Get('/profile')
   async show(@Request() req) {
     const user = await this.showProfile.execute(req.user.sub);
 
@@ -42,17 +47,33 @@ export class UserController {
   }
 
   @UseGuards(AuthGuard)
+  @Get()
+  async findAll() {
+    const users = await this.findUsers.execute();
+
+    return responseUser.array().parse(users);
+  }
+
+  @UseGuards(AuthGuard)
   @Patch()
   async update(@Request() req, @Body() data: UpdateUserDTO) {
-    const user = await this.updateUser.execute(req.user.sub, { ...data });
+    await this.updateUser.execute(req.user.sub, { ...data });
 
-    return responseUser.parse(user);
+    return;
   }
 
   @UseGuards(AuthGuard)
   @Put()
   async replace(@Request() req, @Body() data: ReplaceUserDTO) {
     await this.replaceUser.execute(req.user.sub, data);
+
+    return;
+  }
+
+  @UseGuards(AuthGuard)
+  @Delete()
+  async delete(@Request() req) {
+    await this.deleteUser.execute(req.user.sub);
 
     return;
   }

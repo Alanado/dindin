@@ -6,6 +6,9 @@ import { APP_PIPE } from '@nestjs/core';
 import { ZodValidationPipe } from 'nestjs-zod';
 import { ShowProfileService } from './services/show-profile.service';
 import { UpdateUserService } from './services/update-user.service';
+import { FindUsersService } from './services/find-users.service';
+import { DeleteUserService } from './services/delete-user.service';
+import { ReplaceUserService } from './services/replace-user.service';
 
 @Module({
   controllers: [UserController],
@@ -14,6 +17,9 @@ import { UpdateUserService } from './services/update-user.service';
     CreateUserService,
     ShowProfileService,
     UpdateUserService,
+    FindUsersService,
+    DeleteUserService,
+    ReplaceUserService,
     { provide: APP_PIPE, useClass: ZodValidationPipe },
   ],
   imports: [],

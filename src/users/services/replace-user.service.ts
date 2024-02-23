@@ -7,20 +7,28 @@ import { hash } from 'bcrypt';
 export class ReplaceUserService {
   constructor(private prismaService: PrismaService) {}
 
-  async execute(id: string, data: ReplaceUserDTO) {
-    const emailExist = await this.prismaService.user.findUnique({
-      where: { email: data.email },
-    });
+  async execute(id: string, { name, email, password }: ReplaceUserDTO) {
+    const user = await this.prismaService.user.findUnique({ where: { id } });
 
-    if (emailExist) {
-      throw new HttpException('email already used.', HttpStatus.BAD_REQUEST);
+    if (email !== user?.email) {
+      const userExist = await this.prismaService.user.findUnique({
+        where: { email },
+      });
+
+      if (userExist) {
+        throw new HttpException('email already used', HttpStatus.BAD_REQUEST);
+      }
     }
 
-    const hashedPassword = await hash(data.password, 8);
-
     await this.prismaService.user.update({
-      data: { ...data, password: hashedPassword },
-      where: { id },
+      data: {
+        name,
+        email,
+        password: await hash(password, 8),
+      },
+      where: {
+        id,
+      },
     });
   }
 }

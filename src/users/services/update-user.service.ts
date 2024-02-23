@@ -20,7 +20,7 @@ export class UpdateUserService {
       }
     }
 
-    return await this.prismaService.user.update({
+    await this.prismaService.user.update({
       data: {
         name,
         email,
