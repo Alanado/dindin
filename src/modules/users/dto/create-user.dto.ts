@@ -12,5 +12,3 @@ export class CreateUserDTO extends createZodDto(createUserSchema) {}
 export const responseUser = createUserSchema
   .omit({ password: true })
   .extend({ id: z.string() });
-
-// export type ResponseUserCreated = z.infer<typeof responseUserCreated>;

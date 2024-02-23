@@ -8,8 +8,6 @@ export class LoginController {
 
   @Post()
   async loginUser(@Body() data: LoginDTO) {
-    console.log(process.env.SECRET);
-
     return await this.login.execute(data);
   }
 }
