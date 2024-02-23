@@ -16,7 +16,7 @@ export class CreateUserService {
       throw new HttpException('user already exists.', HttpStatus.BAD_REQUEST);
     }
 
-    const hashedPassword = await hash(data.password, 10);
+    const hashedPassword = await hash(data.password, 8);
 
     return await this.prismaService.user.create({
       data: {

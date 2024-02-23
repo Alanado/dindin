@@ -4,6 +4,7 @@ import {
   Get,
   Patch,
   Post,
+  Put,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -13,6 +14,8 @@ import { ShowProfileService } from './services/show-profile.service';
 import { UpdateUserService } from './services/update-user.service';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { AuthGuard } from 'src/infra/providers/auth-guard.provider';
+import { ReplaceUserDTO } from './dto/replace-user.dto';
+import { ReplaceUserService } from './services/replace-user.service';
 
 @Controller('/user')
 export class UserController {
@@ -20,6 +23,7 @@ export class UserController {
     private readonly createUser: CreateUserService,
     private readonly showProfile: ShowProfileService,
     private readonly updateUser: UpdateUserService,
+    private readonly replaceUser: ReplaceUserService,
   ) {}
 
   @Post()
@@ -40,11 +44,16 @@ export class UserController {
   @UseGuards(AuthGuard)
   @Patch()
   async update(@Request() req, @Body() data: UpdateUserDTO) {
-    const user = await this.updateUser.execute({
-      ...data,
-      id: req.user.sub,
-    });
+    const user = await this.updateUser.execute(req.user.sub, { ...data });
 
     return responseUser.parse(user);
+  }
+
+  @UseGuards(AuthGuard)
+  @Put()
+  async replace(@Request() req, @Body() data: ReplaceUserDTO) {
+    await this.replaceUser.execute(req.user.sub, data);
+
+    return;
   }
 }

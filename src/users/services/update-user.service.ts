@@ -1,19 +1,13 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { hash } from 'bcrypt';
 import { PrismaService } from 'src/infra/database/prisma.service';
-
-export type UpdateUser = {
-  id: string;
-  name?: string;
-  email?: string;
-  password?: string;
-};
+import { UpdateUserDTO } from '../dto/update-user.dto';
 
 @Injectable()
 export class UpdateUserService {
   constructor(private prismaService: PrismaService) {}
 
-  async execute({ id, name, email, password }: UpdateUser) {
+  async execute(id: string, { name, email, password }: UpdateUserDTO) {
     const user = await this.prismaService.user.findUnique({ where: { id } });
 
     if (email && email !== user?.email) {
